@@ -9,7 +9,7 @@ export const useAuth = () => {
         try {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
-           
+            errorMessage.value="ログインしました。"
         } catch (error) {
             console.log(error);
         }

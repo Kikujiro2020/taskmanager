@@ -1,11 +1,14 @@
 <script setup>
+import { async } from '@firebase/util';
+
 
 const { signInWithGooglePopup,errorMessage,logOut } = useAuth();
-const signIn = () => {
-    signInWithGooglePopup();
+const signIn = async() => {
+    await signInWithGooglePopup();
+    console.log(errorMessage.value);
 };
 
-async function signOut() {
+const signOut = async()=> {
     await logOut();
     console.log(errorMessage.value);
 }
@@ -24,8 +27,8 @@ async function signOut() {
                 <div class="navbar-nav">
                     <NuxtLink class="nav-link" to="/" activeClass="active" aria-current="page">Home</NuxtLink>
                     <NuxtLink class="nav-link" to="/about" activeClass="active">About</NuxtLink>
-                    <button @click="signIn">Googleでログイン</button>
-                    <button type="button" class="btn btn-outline-secondary" @click="signOut">LogOut</button>
+                    <button @click="signIn">ログイン</button>
+                    <button type="button" class="btn btn-outline-secondary" @click="signOut">ログアウト</button>
                 </div>
             </div>
         </nav>
