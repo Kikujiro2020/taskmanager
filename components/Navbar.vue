@@ -1,5 +1,5 @@
 <script setup>
-import { async } from '@firebase/util';
+
 
 
 const { signInWithGooglePopup,errorMessage,logOut } = useAuth();
