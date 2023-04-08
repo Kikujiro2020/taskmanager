@@ -27,6 +27,7 @@ const signOut = async()=> {
                 <div class="navbar-nav">
                     <NuxtLink class="nav-link" to="/" activeClass="active" aria-current="page">Home</NuxtLink>
                     <NuxtLink class="nav-link" to="/about" activeClass="active">About</NuxtLink>
+                    <NuxtLink class="nav-link" to="/user" activeClass="active">UserPage</NuxtLink>
                     <button @click="signIn">ログイン</button>
                     <button type="button" class="btn btn-outline-secondary" @click="signOut">ログアウト</button>
                 </div>

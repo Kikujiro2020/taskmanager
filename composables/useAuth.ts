@@ -1,7 +1,7 @@
-import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "firebase/auth";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged,User } from "firebase/auth";
 export const useAuth = () => {
 
-    const user = useState('user', () => null)
+    const user = useState<User | null>('user', () => null)
     const errorMessage = ref('')
     async function signInWithGooglePopup() {
         const auth = getAuth();
