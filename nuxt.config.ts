@@ -22,7 +22,7 @@ export default defineNuxtConfig({
             { rel: "stylesheet", href: "https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" }
           ],
           script: [
-            { src: 'https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/esm/popper' },
+            { src: 'https://unpkg.com/@popperjs/core@2/dist/umd/popper.js' },
             { src: 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js' }
           ]
         },
