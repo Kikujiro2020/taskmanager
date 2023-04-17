@@ -1,4 +1,5 @@
-import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged,User } from "firebase/auth";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, User } from "firebase/auth";
+import { collection,addDoc,getFirestore } from "firebase/firestore"
 export const useAuth = () => {
 
     const user = useState<User | null>('user', () => null)
@@ -9,7 +10,16 @@ export const useAuth = () => {
         try {
             const result = await signInWithPopup(auth, provider);
             user.value = result.user;
-            errorMessage.value="ログインしました。"
+            const db = getFirestore()
+            // Add user information to Firestore users collection
+            const usersCollection = collection(db, "users");
+            await addDoc(usersCollection, {
+                uid: user.value?.uid ?? undefined,
+                name: user.value?.displayName ?? undefined,
+                email: user.value?.email ?? undefined
+            });
+
+            console.log("User added to Firestore!");
         } catch (error) {
             console.log(error);
         }
@@ -26,24 +36,24 @@ export const useAuth = () => {
             errorMessage.value = error.message
         });
     }
-    async function checkAuthState(){
-        return await new Promise<void>((resolve,reject)=>{
-            if(process.server) return resolve()
+    async function checkAuthState() {
+        return await new Promise<void>((resolve, reject) => {
+            if (process.server) return resolve()
             const auth = getAuth();
             onAuthStateChanged(
                 auth,
                 (changeUser) => {
-                    if(changeUser){
+                    if (changeUser) {
                         user.value = changeUser;
                         resolve()
-                    }else {
+                    } else {
                         user.value = null
                         resolve()
                     }
                 }
             )
         })
-    } 
+    }
     return {
         signInWithGooglePopup,
         logOut,

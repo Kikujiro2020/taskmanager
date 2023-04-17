@@ -1,6 +1,5 @@
 import { initializeApp } from "firebase/app";
 import { defineNuxtPlugin } from '#app'
-
 export default defineNuxtPlugin(()=>{
     useState('firebaseApp',()=>{
         const config = useRuntimeConfig()
@@ -13,6 +12,7 @@ export default defineNuxtPlugin(()=>{
             appId:config.FIREBASE_APP_ID,
            
           }
-          return initializeApp(firebaseConfig)
-    })
+           
+          return initializeApp(firebaseConfig);
+    })                                                                                                                    
 })
