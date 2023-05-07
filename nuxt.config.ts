@@ -1,5 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  ssr: false,
   runtimeConfig:{
     public: {
       FIREBASE_API_KEY: process.env.FIREBASE_API_KEY || '',
@@ -8,6 +9,7 @@ export default defineNuxtConfig({
       FIREBASE_STORAGE_BUCKET: process.env.FIREBASE_STORAGE_BUCKET || '',
       FIREBASE_MESSAGING_SENDER_ID:process.env.FIREBASE_MESSAGING_SENDER_ID || '',
       FIREBASE_APP_ID: process.env.FIREBASE_APP_ID || '',
+      VUE_APP_ADMIN_EMAIL: process.env.VUE_APP_ADMIN_EMAIL || '',
     },
   },
     app: {
@@ -22,7 +24,7 @@ export default defineNuxtConfig({
             { rel: "stylesheet", href: "https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" }
           ],
           script: [
-            { src: 'https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/esm/popper' },
+            { src: 'https://unpkg.com/@popperjs/core@2/dist/umd/popper.js' },
             { src: 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js' }
           ]
         },

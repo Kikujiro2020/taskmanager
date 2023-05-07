@@ -1,11 +1,29 @@
-<script setup>
-import { async } from '@firebase/util';
-
-
+<script setup lang="ts">
 const { signInWithGooglePopup,errorMessage,logOut } = useAuth();
-const signIn = async() => {
-    await signInWithGooglePopup();
-    console.log(errorMessage.value);
+//ログイン方法の切り替えが必要　emailとpasswordでログインするか、Googleアカウントでログインするか
+
+const signIn = async(useGoogleSignIn:boolean) => {
+    //emailとpasswordでログインする場合
+    if(!useGoogleSignIn){
+        //emailとpasswordでログインする処理
+        //login.vueにページ遷移する
+    const router = useRouter();
+    router.push("/login");
+    }
+    //Googleアカウントでログインする場合
+    else{
+        await signInWithGooglePopup();
+        console.log(errorMessage.value);
+    }
+    //ログインに成功したら、errorMessage.valueが空になる
+    if(errorMessage.value === ""){
+        console.log("ログインに成功しました");
+    }
+    //ログインに失敗したら、errorMessage.valueにエラーメッセージが入る
+    else{
+        console.log(errorMessage.value);
+    }
+
 };
 
 const signOut = async()=> {
@@ -27,10 +45,11 @@ const signOut = async()=> {
                 <div class="navbar-nav">
                     <NuxtLink class="nav-link" to="/" activeClass="active" aria-current="page">Home</NuxtLink>
                     <NuxtLink class="nav-link" to="/about" activeClass="active">About</NuxtLink>
+                    <NuxtLink class="nav-link" to="/teams" activeClass="active">Teams</NuxtLink>
                     <NuxtLink class="nav-link" to="/user" activeClass="active">User</NuxtLink>
                     <NuxtLink class="nav-link" to="/tasks" activeClass="active">Tasks</NuxtLink>
-
-                    <button @click="signIn">ログイン</button>
+                    <button @click="signIn(true)">Googleアカウントでログイン</button>
+                    <button @click="signIn(false)">メールアドレスでログイン</button>
                     <button type="button" class="btn btn-outline-secondary" @click="signOut">ログアウト</button>
                 </div>
             </div>

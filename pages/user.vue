@@ -22,6 +22,7 @@
           </div>
         </div>
       </div>
+      <button @click="makeDummyAccount()">ダミーアカウント作成</button>
     </div>
   </template>
  
@@ -30,9 +31,23 @@
   import { useAuth } from "@/composables/useAuth.ts";
   
   const showEmail = ref(false);
+  const isAdministrator = ref(false);
+  const { user, checkAuthState,isAdmin,createDummyAccount } = useAuth();
   
-  const { user, checkAuthState } = useAuth();
-  
+  const adminCheck = () => {
+    //admin権限をチェック
+    isAdministrator.value = isAdmin()
+  };
+  const makeDummyAccount = () => {
+    //admin権限をチェック
+    adminCheck()
+    //admin権限がある場合のみダミーアカウントを作成
+    if (isAdministrator.value === true) {
+      createDummyAccount()
+    }else{
+      alert("管理者権限がありません")
+    }
+  }
   checkAuthState()
     .then(() => {
       console.log("認証状態を確認しました");
