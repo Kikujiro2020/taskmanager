@@ -1,5 +1,25 @@
 <template>
     <div class="container">
+      <div class="team-list"></div>
+      <div class="mb-3">
+        <!--チーム一覧を表示する-->
+        <h1>チーム一覧</h1>
+        <div class="team-list-cards">
+          <div v-for="(team,index) in teams">
+            <div class="team-list-card card-body justify-content-between">
+              <h2>{{ team.teamName }}</h2>
+              <p>リーダー: {{ team.leaderId }}</p>
+              <p>メンバー: {{ team.memberId }}</p>
+              <p>チームID: {{ team.teamId }}</p>
+              <p>チーム作成日: {{ team.createdat.toDate() }}</p>
+              <p>チーム更新日: {{ team.updatedat }}</p>
+              <button type="button" class="btn btn-primary" @click="joinTeam(team.teamId)">参加</button>
+            </div>
+            
+          </div> 
+        </div>
+
+      </div>
       <h2>新しいチームを作成する</h2>      
         <div class="mb-3">
           <label for="team-name" class="form-label">チーム名:</label>
@@ -19,7 +39,7 @@
         {middleware:"auth"}
     )
   import { ref } from 'vue';
-  import { useAuth } from '~~/composables/useAuth';
+  
   const { checkAuthState,user } = useAuth();
   checkAuthState()
   .then(() => {
@@ -34,6 +54,21 @@
   const leaderId = ref(currentUser.email);
   const createdTeam = ref('');
   const router = useRouter();
+  const teams = ref([]);
+  const { getMyTeam } = useTeam();
+  getMyTeam(currentUser.email).then((res) => {
+    teams.value = res;
+    console.log(teams.value);
+  });
+  function joinTeam(teamId) {
+    //composablesのjoinTeamを呼び出す
+    joinTeam(teamId).then((res) => {
+      console.log(res);
+      router.push('/teams');
+    });
+  }
+
+
   function createTeam(leaderId,teamName) {
     //composablesのmakeTeamを呼び出す
     const team = {
@@ -48,6 +83,34 @@
   </script>
   
   <style scoped>
+  .team-list {
+    margin-bottom: 20px;
+  }
+  .team-list-card {
+    margin-bottom: 20px;
+  }
+  .team-list-cards {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .team-list-card {
+    width: 300px;
+    margin-right: 20px;
+  }
+  .team-list-card:last-child {
+    margin-right: 0;
+  }
+  .team-list-card h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  .team-list-card p {
+    margin-bottom: 5px;
+  }
+  .team-list-card button {
+    margin-top: 10px;
+  }
+  
   form {
     max-width: 500px;
     margin: auto;
@@ -67,5 +130,6 @@
     border-color: #80bdff;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
   }
+  
   </style>
   
