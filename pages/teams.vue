@@ -13,7 +13,9 @@
               <p>チームID: {{ team.teamId }}</p>
               <p>チーム作成日: {{ team.createdat.toDate() }}</p>
               <p>チーム更新日: {{ team.updatedat }}</p>
-              <button type="button" class="btn btn-primary" @click="joinTeam(team.teamId)">参加</button>
+              <button type="button" class="btn btn-primary m-1" @click="teamChange(team.teamId)" :disabled="isTeamJoined(team.teamId)"> {{ isTeamJoined(team.teamId) ? "参加中" : "変更" }}</button>
+              <button type="button" class="btn btn-primary m-1" @click="customTeam(team.teamId)">設定</button>
+            
             </div>
             
           </div> 
@@ -29,7 +31,7 @@
           <label for="leader-id" class="form-label">リーダーのID(email):</label>
           <input type="email" id="leader-id" v-model="leaderId" required class="form-control" readonly>
         </div>
-        <button type="submit" class="btn btn-primary"  @click="createTeam(leaderId,teamName)">作成</button>      
+        <button type="submit" class="btn btn-primary "  @click="createTeam(leaderId,teamName)">作成</button>      
       <p v-if="createdTeam">チーム{{ createdTeam }}を作成しました。</p>
     </div>
   </template>
@@ -49,26 +51,39 @@
     console.log(error.message);
   });
   const teamName = ref('');
-  const {makeTeam} = useTeam();
+  const {makeTeam,changeTeam} = useTeam();
   const currentUser = user.value;
   const leaderId = ref(currentUser.email);
   const createdTeam = ref('');
   const router = useRouter();
   const teams = ref([]);
+  let userInfo = reactive({});
+  const belongs = ref(userInfo.belongs);
   const { getMyTeam } = useTeam();
+  //ユーザー情報を取得する
+  const { getUserInfo } = useAuth();
   getMyTeam(currentUser.email).then((res) => {
     teams.value = res;
-    console.log(teams.value);
+    
   });
-  function joinTeam(teamId) {
-    //composablesのjoinTeamを呼び出す
-    joinTeam(teamId).then((res) => {
-      console.log(res);
-      router.push('/teams');
-    });
+
+  await getUserInfo().then((res) => {
+    userInfo = res;
+    belongs.value = userInfo.belongs;
+  });
+  function customTeam(teamId) {
+      console.log(teamId);
+      router.push(`/team/${teamId}`);
   }
-
-
+  //チームを変更する関数
+  function teamChange(teamId) {
+    console.log(teamId);
+    changeTeam(teamId,userInfo.uid)
+    userInfo.belongs = teamId;
+    belongs.value = teamId;
+   
+  }
+  //チームを作成する関数
   function createTeam(leaderId,teamName) {
     //composablesのmakeTeamを呼び出す
     const team = {
@@ -80,6 +95,13 @@
       //router.push('/teams');
     });
   }
+  //ユーザーが指定したチームに参加しているかどうかを判定する関数
+  
+  function isTeamJoined(teamId) {
+    return belongs.value === teamId; 
+  }
+
+
   </script>
   
   <style scoped>

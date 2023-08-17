@@ -1,5 +1,5 @@
 // Purpose: Composable for creating a team
-import { getFirestore, collection, addDoc, serverTimestamp ,query,where,getDocs} from "firebase/firestore";
+import { getFirestore, collection, addDoc, serverTimestamp ,query,where,getDocs, arrayUnion, doc, updateDoc, getDoc, arrayRemove} from "firebase/firestore";
 // Define a Team interface
 export const useTeam = () => {
   interface Team {
@@ -35,7 +35,7 @@ export const useTeam = () => {
     const q = query(teamsRef, where('leaderId', '==', userId));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
-      console.log(doc.id, ' => ', doc.data());
+      
       let team: Team = {
         teamName: doc.data().teamName,
         teamId: doc.id,
@@ -47,7 +47,52 @@ export const useTeam = () => {
     });
     return myTeams;
   };
+  //チームを取得する
+  const getTeam = async (teamId: string) => {
+    const teamRef = doc(db, 'teams', teamId);
+    const docSnap = await getDoc(teamRef);
+    if (docSnap.exists()) {
+      console.log('Document data:', docSnap.data());
+      return docSnap.data();
+    } else {
+      // doc.data() will be undefined in this case
+      console.log('No such document!');
+    } 
+  }
+    
+//チームにメンバーを追加する
+  const addMember = async (teamId: string, userId: string) => {
+    const teamRef = doc(db, 'teams', teamId);
+    await updateDoc(teamRef, {
+      members: arrayUnion(userId),
+    });
+  };
+//チームからメンバーを削除する
+  const deleteMember = async (teamId: string, userId: string) => {
+    const teamRef = doc(db, 'teams', teamId);           
+    await updateDoc(teamRef, {
+      members: arrayRemove(userId),
+    });
+  };
 
+//ユーザーの所属チームを変更する
+  const changeTeam = async (teamId: string, userId: string) => {
+    //usersコレクションのドキュメントのuidのフィールドをuserIdで検索
+    const userRef = collection(db, 'users');
+    const q = query(userRef, where('uid', '==', userId));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+   
+      //ドキュメントのbelongsフィールドをteamIdに変更
+      updateDoc(doc.ref, {
+        belongs: teamId,
+      });
+    });
+    //
+  };
 
-  return { makeTeam ,getMyTeam,useTeam};
+//チームメンバーに変更があればリアルタイムに反映する  
+                                  
+  
+  return { makeTeam ,getMyTeam,useTeam,addMember,getTeam,changeTeam,deleteMember };
 }

@@ -50,7 +50,8 @@ export const useAuth = () => {
                     uid: result.user?.uid,
                     name: result.user?.displayName,
                     email: result.user?.email,
-                    photoURL: result.user?.photoURL
+                    photoURL: result.user?.photoURL,
+                    belongs: "",
                 });
             } else {
                 // ドキュメントが存在する場合は、何もせず終了
@@ -81,7 +82,7 @@ export const useAuth = () => {
             console.log("user is not admin")
             return
         }
-        //メールアドレスのドメール部分
+        //メールアドレスのドメイン部分
         const domain = "example.com"
         //パスワード
         const password = "password"
@@ -105,7 +106,8 @@ export const useAuth = () => {
                         uid: result.user?.uid,
                         name: result.user?.displayName,
                         email: result.user?.email,
-                        photoURL: result.user?.photoURL
+                        photoURL: result.user?.photoURL,
+                        belongs: "",
                     });
                 } else {
                     // ドキュメントが存在する場合は、何もせず終了
@@ -165,6 +167,48 @@ export const useAuth = () => {
         }
         return true
     }
+    //user情報をfirestoreのusersコレクションから取得する関数
+    async function getUserInfo() {
+        const auth = getAuth();
+        //現在のuser情報を取得
+        let user = auth.currentUser;
+        if (user === null) {
+            console.log("user is null")
+            return
+        }
+        const db = getFirestore()
+        const q = query(collection(db, "users"), where("uid", "==", user.uid));
+        const querySnapshot = await getDocs(q);
+        if (querySnapshot.empty) {
+            // ドキュメントが存在しない場合は、新しいドキュメントを追加
+            console.log("user is not exist")
+            return
+        } else {
+            // ドキュメントが存在する場合は、情報を取得して返す
+            const doc = querySnapshot.docs[0]
+            console.log(doc.data())
+            return doc.data()
+        }
+    }
+    //すべてのユーザー情報を取得する関数ユーザー
+    async function getAllUserInfo() {
+        const db = getFirestore()
+        const q = query(collection(db, "users"));
+        const querySnapshot = await getDocs(q);
+        if (querySnapshot.empty) {
+            // ドキュメントが存在しない場合は、新しいドキュメントを追加
+            console.log("user is not exist")
+            return
+        } else {
+            //すべてのユーザー情報を取得して返す
+            const users: any[] = []
+            querySnapshot.forEach((doc) => {
+                users.push(doc.data())
+            }
+            )
+            return users
+        }
+    }
 
     return {
         signInWithGooglePopup,
@@ -174,6 +218,8 @@ export const useAuth = () => {
         user,
         createDummyAccount,
         isAdmin,
-        logInWithEmailAndPassword
+        logInWithEmailAndPassword,
+        getUserInfo,
+        getAllUserInfo,
     }
 }
