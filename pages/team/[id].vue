@@ -15,7 +15,7 @@
       <div v-for="(user, index) in users" class="user-item">
         <div>
           {{ user.email }}
-          <svg v-if="!team.members.includes(user.uid)" @click="addTeamMember(user.uid)" xmlns="http://www.w3.org/2000/svg"
+          <svg v-if="!team.members.includes(user.uid)" @click="addTeamMember(user.uid,user.email)" xmlns="http://www.w3.org/2000/svg"
             width="16" height="16" fill="currentColor" class="bi bi-person-fill-add" viewBox="0 0 16 16">
             <path
               d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0Zm-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -52,15 +52,23 @@ getTeam(teamId.value).then((res) => {
 const { getAllUserInfo } = useAuth();
 const users = ref([]);
 getAllUserInfo().then((res) => {
+  //team.value.leaderIdが取得できているか確認
+  console.log(team.value.leaderId,res);
+
+  //resからリーダーを削除
+
+  res = res.filter((user) => user.email != team.value.leaderId);
 
   users.value = res;
-
+  
+  
 });
 
 const { addMember } = useTeam();
 //チームにメンバーを追加する関数
-function addTeamMember(uid) {
+function addTeamMember(uid, userEmail) {
   addMember(teamId.value, uid);
+  
   team.value.members.push(uid);
 }
 //チームからメンバーを削除する関数

@@ -209,7 +209,41 @@ export const useAuth = () => {
             return users
         }
     }
-
+    //ユーザーの情報をユーザーIDから取得する関数
+    async function getUserInfoFromId(userId: string) {
+        const db = getFirestore()
+        const q = query(collection(db, "users"), where("uid", "==", userId));
+        const querySnapshot = await getDocs(q);
+        if (querySnapshot.empty) {
+            console.log("user is not exist")
+            return
+        } else {
+            // ドキュメントが存在する場合は、情報を取得して返す
+            const doc = querySnapshot.docs[0]
+            console.log(doc.data())
+            return doc.data()
+        }
+    }
+    //uidのリストからユーザー情報を配列で取得する関数
+    async function getUserInfoFromIdList(userIdList: string[]) {
+        const db = getFirestore()
+        const users: any[] = []
+        for (const userId of userIdList) {
+            const q = query(collection(db, "users"), where("uid", "==", userId));
+            const querySnapshot = await getDocs(q);
+            if (querySnapshot.empty) {
+                console.log("user is not exist")
+                return
+            } else {
+                // ドキュメントが存在する場合は、情報を取得して返す
+                const doc = querySnapshot.docs[0]
+                console.log(doc.data())
+                users.push(doc.data())
+            }
+        }
+        return users
+    }
+    
     return {
         signInWithGooglePopup,
         logOut,
@@ -221,5 +255,7 @@ export const useAuth = () => {
         logInWithEmailAndPassword,
         getUserInfo,
         getAllUserInfo,
+        getUserInfoFromId,
+        getUserInfoFromIdList,
     }
 }

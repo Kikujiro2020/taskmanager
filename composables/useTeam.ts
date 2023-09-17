@@ -7,12 +7,12 @@ export const useTeam = () => {
     teamId?: string;
     leaderId: string;
     createdat?: object;
+    members?: string[];
   }
 
   const db = getFirestore();
   const teamsRef = collection(db, 'teams');
-  const router = useRouter();
-  const createdTeam = ref('');
+  
   // Define a makeTeam function
   const makeTeam = async (team: Team) => {
     //teamにcreatedatを追加
@@ -41,6 +41,7 @@ export const useTeam = () => {
         teamId: doc.id,
         leaderId: doc.data().leaderId,
         createdat: doc.data().createdat,
+        members: doc.data().members,
       };
       myTeams.push(team);
      

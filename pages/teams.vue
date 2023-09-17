@@ -89,6 +89,7 @@
     const team = {
       leaderId: leaderId,
       teamName: teamName,
+      members: [leaderId],
     };
     makeTeam(team).then((res) => {
       createdTeam.value = res.teamName;
